@@ -15,11 +15,13 @@ class CreateChatroomsTable extends Migration
     {
         Schema::create('chatrooms', function (Blueprint $table) {
             $table->id();
-            $table->unique(array('loginuserid', 'chatuserid'));
-            $table->unsignedBigInteger('loginuserid');
-            $table->foreign('loginuserid')->references('id')->on('users')->onDelete('cascade');
-            $table->unsignedBigInteger('chatuserid');
-            $table->foreign('chatuserid')->references('id')->on('users')->onDelete('cascade');
+            $table->unique(array('sender', 'receiver'));
+            $table->unsignedBigInteger('sender');
+            $table->foreign('sender')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('receiver');
+            $table->foreign('receiver')->references('id')->on('users')->onDelete('cascade');
+            $table->enum('status', ['default', 'block', 'pending','accepted','rejected'])->default('default');
+
             $table->timestamps();
         });
     }

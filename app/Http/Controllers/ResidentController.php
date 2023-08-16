@@ -19,37 +19,98 @@ use Illuminate\Support\Facades\File;
 class ResidentController extends Controller
 {
 
+      public function updateUserName(Request $request)
+      {
+
+        $isValidate = Validator::make($request->all(), [
 
 
-    public function searchresident($subadminid, $q)
-    {
-
-        // ->join('users', 'users.id', '=', 'residents.residentid')
-        // ->join('owners', 'owners.residentid', "=", 'residents.residentid');
-
-        $data = User::join(
-            'residents',
-            'users.id',
-            '=',
-            'residents.residentid'
-        )
-            ->Where('residents.subadminid', $subadminid)
-            ->Where('users.firstname', 'LIKE', '%' . $q . '%')
-            ->orWhere('users.lastname', 'LIKE', '%' . $q . '%')
-            ->orWhere('users.mobileno', 'LIKE', '%' . $q . '%')
-            ->orWhere('users.cnic', 'LIKE', '%' . $q . '%')
-            ->orWhere('users.address', 'LIKE', '%' . $q . '%')
-            ->orWhere('residents.vechileno', 'LIKE', '%' . $q . '%')->get();
+            'residentid' => 'required|exists:residents,residentid',
+            'username' => 'required|unique:residents',
+            
+        ]);
 
 
-        return response()->json(
-            [
-                "success" => true,
-                "residentslist" => $data
-            ]
-        );
-    }
+        if ($isValidate->fails()) {
+            return response()->json([
+                "errors" => $isValidate->errors()->all(),
+                "success" => false
 
+            ], 403);
+        }
+
+
+
+$residentId=$request->residentid;
+
+        $resident = Resident::where('residentid',$residentId)->get()->first();
+       
+     
+        $resident->username=$request->username;
+        
+        $resident->update();
+
+        return response()->json([
+            "success" => true,
+            "message"=>"Username updated Successfully"
+
+        
+        ]);
+
+      }
+
+      public function searchresident($subadminid, $q)
+      {
+  
+  
+          $resident = Resident::where(function ($query) use ($q) {
+              $query->where('firstname', 'LIKE', '%' . $q . '%')
+                  ->orWhere('lastname', 'LIKE', '%' . $q . '%')
+                  ->orWhere('mobileno', 'LIKE', '%' . $q . '%')
+                  ->orWhere('address', 'LIKE', '%' . $q . '%');
+          })
+              ->where('status', 1)->where('subadminid', $subadminid)->join('users', 'users.id', '=', 'residents.residentid',)->get();
+  
+  
+          // $data = Resident::join('users', 'users.id', '=', 'residents.residentid',)
+          //     ->Where('residents.residentid', $residentid)
+          //     ->Where('users.firstname', 'LIKE', '%' . $q . '%')
+          //     ->orWhere('users.lastname', 'LIKE', '%' . $q . '%')
+          //     ->orWhere('users.mobileno', 'LIKE', '%' . $q . '%')
+          //     //->orWhere('users.cnic', 'LIKE', '%' . $q . '%')
+  
+  
+          //     ->orWhere('users.address', 'LIKE', '%' . $q . '%')->with('bills')
+          //     // ->orWhere('residents.vechileno', 'LIKE', '%' . $q . '%')
+          //     ->get();
+  
+  
+          return response()->json(
+              [
+                  "success" => true,
+                  "residentslist" => $resident
+              ]
+          );
+      }
+  
+      public function filterResident($subadminid, $type)
+      {
+  
+  
+          $resident = Resident::where('propertytype', $type)->where('subadminid', $subadminid)
+              ->join('users', 'users.id', '=', 'residents.residentid',)->get();
+  
+  
+  
+  
+          return response()->json(
+              [
+                  "success" => true,
+                  "residentslist" => $resident
+              ]
+          );
+      }
+  
     public function registerresident(Request $request)
 
 
@@ -335,7 +396,7 @@ class ResidentController extends Controller
 
 
         $data = Resident::where('subadminid', $id)->where('status', 1)
-            ->join('users', 'users.id', '=', 'residents.residentid',)->with('societydata')
+            ->join('users', 'users.id', '=', 'residents.residentid',)
             ->get();
 
 
@@ -871,5 +932,7 @@ class ResidentController extends Controller
     }
 
 
+   
+    
 
 }

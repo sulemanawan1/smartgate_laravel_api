@@ -57,6 +57,7 @@ return new class extends Migration
             $table->string('state');
             $table->string('city');
 
+
          
             // $table->unsignedBigInteger('societyid');
             // $table->foreign('societyid')->references('id')->on('societies')->onDelete('cascade');
@@ -74,6 +75,8 @@ return new class extends Migration
             $table->string('propertytype');
             $table->integer('committeemember');
             $table->integer('status');
+            $table->string('chatstatus')->default('default'); // Setting 'John Doe' as the default value for 'name' column
+
             // $table->unsignedBigInteger('measurementid');
             // $table->foreign('measurementid')->references('id')->on('measurements')->onDelete('cascade');
 

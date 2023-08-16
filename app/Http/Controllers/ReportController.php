@@ -107,7 +107,7 @@ class ReportController extends Controller
     }
     public function adminreports($residentid)
     {
-        $report = Report::where('userid', $residentid)->where('status','!=',3)->where('status' ,'!=' , 4)->orderByDesc('updated_at')->get();
+        $report = Report::where('userid', $residentid)->where('status','!=',3)->where('status' ,'!=' , 4)->orderByDesc('updated_at')->paginate(6);
         return response()->json([
             "success" => true,
             "data" => $report,
@@ -302,7 +302,7 @@ class ReportController extends Controller
     public function historyreports($subadminid, $userid)
     {   
         
-        $reports =  Report::where('subadminid', $subadminid)->where('userid', $userid)->whereIn('status', [3, 4])->orderByDesc('updated_at')->get();
+        $reports =  Report::where('subadminid', $subadminid)->where('userid', $userid)->whereIn('status', [3, 4])->orderByDesc('updated_at')->paginate(6);;
         
         return response()->json([
             "success" => true,

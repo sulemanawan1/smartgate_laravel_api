@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Bill;
 use App\Models\Superadminfinancemanagers;
@@ -192,11 +193,364 @@ class SuperAdminFinanceManagerController extends Controller
     }
 
 
-    public function currentMonthBills($subadminid)
+
+
+
+
+
+
+    public function allresidentsBill($id)
+
+
     {
 
-        //User
-        //Resident
+
+        $data = Bill::where('bills.residentid', $id)
+            ->join('users', 'users.id', '=', 'bills.residentid')
+            ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+            ->select(
+                'bills.*',
+                'users.*',
+                'residents.vechileno',
+                'residents.residenttype',
+                'residents.propertytype',
+                'residents.committeemember'
+
+            )
+            ->get();
+
+
+
+        return response()->json(
+            [
+                "success" => true,
+                "residentslist" => $data
+            ]
+        );
+    }
+
+
+
+
+
+
+    public function searchResidentsBill($residentid, $q)
+    {
+
+
+        // $data = Bill::where(function ($query) use ($q) {
+        //     $query->where('firstname', 'LIKE', '%' . $q . '%')
+        //         ->orWhere('lastname', 'LIKE', '%' . $q . '%')
+        //         ->orWhere('mobileno', 'LIKE', '%' . $q . '%')
+        //         ->orWhere('address', 'LIKE', '%' . $q . '%');
+        // })
+
+        //     ->join('users', 'users.id', '=', 'bills.residentid')
+        //     ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+        //     ->select(
+        //         'bills.*',
+        //         'users.*',
+        //         'residents.vechileno',
+        //         'residents.residenttype',
+        //         'residents.propertytype',
+        //         'residents.committeemember'
+
+        //     )
+        //     ->get();
+
+
+        // return response()->json([
+        //     "success" => true,
+        //     "residentslist" => $data,
+        // ]);
+        if (!empty($q)) {
+            $bills = Bill::where('bills.residentid', $residentid)
+                ->join('users', 'users.id', '=', 'bills.residentid')
+                ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+                ->select(
+                    'bills.*',
+                    'users.*',
+                    'residents.vechileno',
+                    'residents.residenttype',
+                    'residents.propertytype',
+                    'residents.committeemember'
+
+                )
+                ->whereHas('user', function ($query) use ($q) {
+                    $query->Where('firstname', 'LIKE', '%' . $q . '%')
+                        ->orWhere('lastname', 'LIKE', '%' . $q . '%')
+                        ->orWhere('mobileno', 'LIKE', '%' . $q . '%')
+                        ->orWhere('cnic', 'LIKE', '%' . $q . '%')
+                        ->orWhere('address', 'LIKE', '%' . $q . '%');
+                })
+                ->get();
+
+
+
+
+
+
+            return response()->json([
+                "success" => true,
+                "residentslist" => $bills,
+            ]);
+        }
+    }
+
+
+
+    public function filterBills()
+    {
+
+        $status = request()->status ?? null;
+        $paymenttype = request()->paymenttype ?? null;
+        $startdate = request()->startdate ?? null;
+        $enddate = request()->enddate ?? null;
+        $residentid = request()->residentid ?? null;
+
+
+
+        $isValidate = Validator::make(request()->all(), [
+
+            'startdate' => 'date|nullable',
+            'enddate' => 'date|nullable',
+            'paymenttype' => 'nullable',
+            'status' => 'nullable',
+            'residentid' => 'required|exists:users,id',
+
+
+
+        ]);
+        if ($isValidate->fails()) {
+            return response()->json([
+                "errors" => $isValidate->errors()->all(),
+                "success" => false
+            ], 403);
+        }
+
+        $startDatecurrentYear = date('Y', strtotime($startdate));
+        $startDatecurrentMonth = date('m', strtotime($startdate));
+        $endDatecurrentYear = date('Y', strtotime($enddate));
+        $endDatecurrentMonth = date('m', strtotime($enddate));
+        // echo($status);
+        // echo($paymenttype);
+        // echo($startdate);
+        // echo($enddate);
+
+        if (!empty($status) && !empty($paymenttype) && !empty($startdate) && !empty($enddate)) {
+
+
+            $bills = Bill::where('bills.residentid', $residentid)
+                ->join('users', 'users.id', '=', 'bills.residentid')
+                ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+                ->select(
+                    'bills.*',
+                    'users.*',
+                    'residents.vechileno',
+                    'residents.residenttype',
+                    'residents.propertytype',
+                    'residents.committeemember'
+
+                )
+
+                ->where('bills.status', $status)->where('paymenttype', $paymenttype)
+                ->whereMonth('billstartdate', $startDatecurrentMonth)->whereYear(
+                    'billstartdate',
+                    $startDatecurrentYear
+                )->whereMonth('billenddate', $endDatecurrentMonth)->whereYear(
+                    'billenddate',
+                    $endDatecurrentYear
+                )
+
+                ->get();
+
+            return response()->json([
+                "success" => true,
+                "residentslist" => $bills,
+            ]);
+        }
+
+        if (!empty($status) && !empty($paymenttype)) {
+
+
+            $bills = Bill::where('bills.residentid', $residentid)
+                ->join('users', 'users.id', '=', 'bills.residentid')
+                ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+                ->select(
+                    'bills.*',
+                    'users.*',
+                    'residents.vechileno',
+                    'residents.residenttype',
+                    'residents.propertytype',
+                    'residents.committeemember'
+
+                )->where('paymenttype', $paymenttype)
+                ->where('bills.status', $status)
+
+                ->get();
+
+            return response()->json([
+                "success" => true,
+                "residentslist" => $bills,
+            ]);
+        } else if (!empty($status) && !empty($startdate) && !empty($enddate)) {
+
+
+            $bills = Bill::where('bills.residentid', $residentid)
+                ->join('users', 'users.id', '=', 'bills.residentid')
+                ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+                ->select(
+                    'bills.*',
+                    'users.*',
+                    'residents.vechileno',
+                    'residents.residenttype',
+                    'residents.propertytype',
+                    'residents.committeemember'
+
+                )
+                ->whereMonth('billstartdate', $startDatecurrentMonth)->whereYear(
+                    'billstartdate',
+                    $startDatecurrentYear
+                )->whereMonth('billenddate', $endDatecurrentMonth)->whereYear(
+                    'billenddate',
+                    $endDatecurrentYear
+                )
+
+                ->get();
+
+            return response()->json([
+                "success" => true,
+                "residentslist" => $bills,
+            ]);
+        } else if (!empty($paymenttype) && !empty($startdate) && !empty($enddate)) {
+
+
+            $bills = Bill::where('bills.residentid', $residentid)
+                ->join('users', 'users.id', '=', 'bills.residentid')
+                ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+                ->select(
+                    'bills.*',
+                    'users.*',
+                    'residents.vechileno',
+                    'residents.residenttype',
+                    'residents.propertytype',
+                    'residents.committeemember'
+
+                )->where('paymenttype', $paymenttype)
+                ->whereMonth('billstartdate', $startDatecurrentMonth)->whereYear(
+                    'billstartdate',
+                    $startDatecurrentYear
+                )->whereMonth('billenddate', $endDatecurrentMonth)->whereYear(
+                    'billenddate',
+                    $endDatecurrentYear
+                )
+
+                ->get();
+
+            return response()->json([
+                "success" => true,
+                "residentslist" => $bills,
+            ]);
+        } else if (!empty($status)) {
+
+            $bills = Bill::where('bills.residentid', $residentid)
+                ->join('users', 'users.id', '=', 'bills.residentid')
+                ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+                ->select(
+                    'bills.*',
+                    'users.*',
+                    'residents.vechileno',
+                    'residents.residenttype',
+                    'residents.propertytype',
+                    'residents.committeemember'
+
+                )
+                ->where('bills.status', $status)
+
+
+                ->get();
+
+            return response()->json([
+                "success" => true,
+                "residentslist" => $bills,
+            ]);
+        } else if (!empty($paymenttype)) {
+            $bills = Bill::where('bills.residentid', $residentid)
+                ->join('users', 'users.id', '=', 'bills.residentid')
+                ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+                ->select(
+                    'bills.*',
+                    'users.*',
+                    'residents.vechileno',
+                    'residents.residenttype',
+                    'residents.propertytype',
+                    'residents.committeemember'
+
+                )
+                ->where('paymenttype', $paymenttype)
+
+                ->get();
+
+            return response()->json([
+                "success" => true,
+                "residentslist" => $bills,
+            ]);
+        } else if (!empty($startdate) && !empty($enddate)) {
+
+
+
+            $bills = Bill::where('bills.residentid', $residentid)
+                ->join('users', 'users.id', '=', 'bills.residentid')
+                ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+                ->select(
+                    'bills.*',
+                    'users.*',
+                    'residents.vechileno',
+                    'residents.residenttype',
+                    'residents.propertytype',
+                    'residents.committeemember'
+
+                )
+                ->whereMonth('billstartdate', $startDatecurrentMonth)->whereYear(
+                    'billstartdate',
+                    $startDatecurrentYear
+                )->whereMonth('billenddate', $endDatecurrentMonth)->whereYear(
+                    'billenddate',
+                    $endDatecurrentYear
+                )
+
+                ->get();
+
+            return response()->json([
+                "success" => true,
+                "residentslist" => $bills,
+            ]);
+        } else {
+
+
+            $bills = Bill::where('bills.residentid', $residentid)
+                ->join('users', 'users.id', '=', 'bills.residentid')
+                ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+                ->select(
+                    'bills.*',
+                    'users.*',
+                    'residents.vechileno',
+                    'residents.residenttype',
+                    'residents.propertytype',
+                    'residents.committeemember'
+
+                )
+                ->get();
+
+            return response()->json([
+                "success" => true,
+                "residentslist" => $bills,
+            ]);
+        }
+    }
+
+    public function currentMonthBills($subadminid)
+    {
 
 
 
@@ -207,26 +561,25 @@ class SuperAdminFinanceManagerController extends Controller
 
         $currentMonth = date('m', strtotime($currentDate));
 
-        // $bills = Bill::where('subadminid', $subadminid)
-        //  ->whereMonth('billenddate', $currentMonth)
-        //  ->whereYear(
-        //     'billenddate',
-        //     $currentYear
-        // )
-        // ->whereIn('status',[0,1])
-        //     ->with('user')
-        //     ->with('resident')
-        //     ->get();
 
+        $bills = Bill::where('bills.subadminid', $subadminid)
+            ->join('users', 'users.id', '=', 'bills.residentid')
+            ->join('residents', 'residents.residentid', '=', 'bills.residentid')
+            ->select(
+                'bills.*',
+                'users.*',
+                'residents.vechileno',
+                'residents.residenttype',
+                'residents.propertytype',
+                'residents.committeemember'
 
-        $bills = Bill::where('subadminid', $subadminid)
+            )
+
             ->whereMonth('billenddate', $currentMonth)
             ->whereYear(
                 'billenddate',
                 $currentYear
-            )->with('resident')
-            ->with('user')
-            ->with('measurement')
+            )
             ->get();
 
 
@@ -236,7 +589,8 @@ class SuperAdminFinanceManagerController extends Controller
 
         return response()->json([
             "success" => true,
-            "data" => $bills,
+            "residentslist" => $bills,
         ]);
     }
+
 }

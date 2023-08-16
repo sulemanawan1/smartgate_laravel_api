@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Models\Gatekeeper;
 use App\Models\Preapproveentry;
+use App\Models\Resident;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -54,6 +56,59 @@ class PreApproveEntryController extends Controller
         $preapprovedentry->statusdescription=$request->statusdescription;
 
         $preapprovedentry->save();
+
+
+        $residents= Gatekeeper::where('gatekeeperid',$request->gatekeeperid)
+        ->join('users','users.id','=','gatekeepers.gatekeeperid')->get();
+
+
+        $user=User::find($request->userid);
+
+        $fcm=[];
+
+        foreach ($residents as $datavals) {
+
+            array_push($fcm, $datavals['fcmtoken']);
+
+        }
+
+           
+        $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $mydata=['registration_ids'=>$fcm,
+ 
+        "data"=>["type"=>'PreApproveEntry'],
+        "android"=> [
+            "priority"=> "high",
+            "ttl"=> 60 * 60 * 1,
+            "android_channel_id"=>"smart-gate-notification"
+
+        ],
+        "notification"=>['title'=>'Preapproved Entry','body'=>'You have a Preapproved Entry request from '.$user->address,
+        
+        ]
+
+    ];
+    $finaldata=json_encode($mydata);
+        $headers = array (
+            'Authorization: key=' . $serverkey,
+            'Content-Type: application/json'
+        );
+        $ch = curl_init ();
+        curl_setopt ( $ch, CURLOPT_URL, $url );
+        curl_setopt ( $ch, CURLOPT_POST, true );
+        curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $finaldata );
+        $result = curl_exec ( $ch );
+        // var_dump($result);
+        curl_close ( $ch );
+
+
+
+
+
 
         return response()->json([
             "success" => true,
@@ -109,7 +164,7 @@ class PreApproveEntryController extends Controller
 
 public function viewpreapproveentryreports($userid)
 {
-    $preapproveentryreports= Preapproveentry::where('userid',"=",$userid)->orderBy('id', 'DESC')-> get();
+    $preapproveentryreports= Preapproveentry::where('userid',"=",$userid)->orderBy('id', 'DESC')->paginate(6);
 
     return response()->json([
         "success" => true,
@@ -145,6 +200,80 @@ public function viewpreapproveentryreports($userid)
         $preapproveentryreports->updated_at = Carbon::now()->addHour(5)->toDateTimeString();
         $preapproveentryreports->statusdescription = $request->statusdescription;
         $preapproveentryreports->update();
+
+        // $residents= Gatekeeper::where('gatekeeperid',$request->gatekeeperid)
+        // ->join('users','users.id','=','gatekeepers.gatekeeperid')->get();
+
+
+        $fcm=[];
+      
+        $user=User::find( $preapproveentryreports->userid);
+        array_push($fcm, $user->fcmtoken);
+        $bodyData='';
+       if ($preapproveentryreports->status==1)
+
+       {
+
+$bodyData="The Gatekeeper Approved your Preapprove Entry Request of ".  $preapproveentryreports->visitortype;
+       }
+
+     else  if ($preapproveentryreports->status==2)
+
+       {
+
+$bodyData="Your Preapproved Entry Just Checkin";
+       }
+
+       else  if ($preapproveentryreports->status==3)
+
+       {
+
+$bodyData="Your Preapproved Entry Just Checkout";
+       }
+
+       
+
+           
+        $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $mydata=['registration_ids'=>$fcm,
+ 
+        "data"=>["type"=>'PreApproveEntry'],
+        "android"=> [
+            "priority"=> "high",
+            "ttl"=> 60 * 60 * 1,
+            "android_channel_id"=>"smart-gate-notification"
+
+        ],
+        "notification"=>['title'=>'Preapproved Entry','body'=>$bodyData,
+        
+        ]
+
+    ];
+    $finaldata=json_encode($mydata);
+        $headers = array (
+            'Authorization: key=' . $serverkey,
+            'Content-Type: application/json'
+        );
+        $ch = curl_init ();
+        curl_setopt ( $ch, CURLOPT_URL, $url );
+        curl_setopt ( $ch, CURLOPT_POST, true );
+        curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $finaldata );
+        $result = curl_exec ( $ch );
+        // var_dump($result);
+        curl_close ( $ch );
+
+
+
+
+
+
+
+
+
         return response()->json([
             "success" => true,
             "data" => $preapproveentryreports,
@@ -175,11 +304,72 @@ public function viewpreapproveentryreports($userid)
             ], 403);
         }
 
+        $currentTime = Carbon::now(); // Get the current time as a Carbon instance
+        $checkoutTime = $currentTime->format('H:i'); // Format the current time as "h:i A"
+        
+
         $preapproveentryreports = Preapproveentry::Find($request->id);
         $preapproveentryreports->status = $request->status;
-        $preapproveentryreports->updated_at = Carbon::now()->addHour(5)->toDateTimeString();
+        $preapproveentryreports->checkouttime = $checkoutTime;
         $preapproveentryreports->statusdescription = $request->statusdescription;
         $preapproveentryreports->update();
+
+        $fcm=[];
+      
+        $user=User::find( $preapproveentryreports->userid);
+        array_push($fcm, $user->fcmtoken);
+        $bodyData='';
+
+        
+ 
+          if ($preapproveentryreports->status==3)
+ 
+        {
+ 
+ $bodyData="Your Preapproved Entry Just Checkout";
+        }
+ 
+        
+ 
+            
+         $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
+         $url = 'https://fcm.googleapis.com/fcm/send';
+         $mydata=['registration_ids'=>$fcm,
+  
+         "data"=>["type"=>'PreApproveEntry'],
+         "android"=> [
+             "priority"=> "high",
+             "ttl"=> 60 * 60 * 1,
+             "android_channel_id"=>"smart-gate-notification"
+ 
+         ],
+         "notification"=>['title'=>'Preapproved Entry','body'=>$bodyData,
+         
+         ]
+ 
+     ];
+     $finaldata=json_encode($mydata);
+         $headers = array (
+             'Authorization: key=' . $serverkey,
+             'Content-Type: application/json'
+         );
+         $ch = curl_init ();
+         curl_setopt ( $ch, CURLOPT_URL, $url );
+         curl_setopt ( $ch, CURLOPT_POST, true );
+         curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+         curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+         curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
+         curl_setopt ( $ch, CURLOPT_POSTFIELDS, $finaldata );
+         $result = curl_exec ( $ch );
+         // var_dump($result);
+         curl_close ( $ch );
+ 
+ 
+ 
+ 
+ 
+
+
         return response()->json([
             "success" => true,
             "data" => $preapproveentryreports,
@@ -240,7 +430,7 @@ public function preapproveentryhistories($userid)
 {
 
     $preapproveentries= Preapproveentry::where('userid','=',$userid)->where('status','=',3)
-    ->get();
+    ->paginate(6);
 
 
     return response()->json([
@@ -257,7 +447,6 @@ public function preapproventrynotifications($userid)
 {
     $unapproveentries= Preapproveentry::where('gatekeeperid','=',$userid)->
     join('users','users.id','=','preapproveentries.userid')->where('status',0)->select(
-        'preapproveentries.id',
         "users.firstname",
         "users.lastname",
         "users.cnic",
@@ -266,20 +455,8 @@ public function preapproventrynotifications($userid)
         "users.roleid",
         "users.rolename",
         "users.image",
-        'preapproveentries.gatekeeperid',
-        'preapproveentries.userid',
-        'preapproveentries.visitortype',
-        'preapproveentries.name',
-        'preapproveentries.description',
-        'preapproveentries.cnic',
-        'preapproveentries.mobileno',
-        'preapproveentries.vechileno',
-        'preapproveentries.arrivaldate',
-        'preapproveentries.arrivaltime',
-        'preapproveentries.status',
-        'preapproveentries.statusdescription',
-        // 'preapproveentries.created_at',
-        // 'preapproveentries.updated_at',
+        'preapproveentries.*',
+        
 
 
     )->GET();

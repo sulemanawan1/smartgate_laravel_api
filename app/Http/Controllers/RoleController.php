@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Event\ChatEvent;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -270,6 +271,16 @@ class RoleController extends Controller
     }
 
 
+    public function eventfire()
+    {
+
+               event(new ChatEvent('helllo'));
+             
+
+
+
+         
+    }
 
     public  function resetpassword(Request $request)
 

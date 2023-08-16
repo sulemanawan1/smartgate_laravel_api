@@ -2,33 +2,30 @@
 
 namespace App\Listener;
 
-use App\Event\UserChat;
+use App\Event\ChatEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use PhpParser\Node\NullableType;
 
-class SendUserChat
+class ChatRequest
 {
     /**
      * Create the event listener.
-     *
-     * @return void
      */
     public function __construct()
     {
         //
     }
 
-    /**
+     /**
      * Handle the event.
      *
-     * @param  \App\Event\UserChat  $event
+     * @param  \App\Event\ChatEvent  $events
      * @return void
      */
-    public function handle(UserChat $event)
+    public function handle(ChatEvent $d)
     {
 
-
-        return $event;
-
+         return $d;
     }
 }

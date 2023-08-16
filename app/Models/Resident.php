@@ -12,6 +12,8 @@ class Resident extends Model
     use HasFactory;
 
 protected $primarykey='residentid';
+protected $table = 'residents';
+
 
     protected $fillable = [
         "residentid",

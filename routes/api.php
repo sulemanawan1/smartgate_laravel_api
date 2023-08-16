@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatRequestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubAdminController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\MarketPlaceController;
 use App\Http\Controllers\EmergencyController;
 use App\Http\Controllers\FinanceManagerController;
 use App\Http\Controllers\SuperAdminFinanceManagerController;
+use App\Http\Controllers\IndividualBillController;
 
 
 
@@ -64,6 +66,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('updatesubadmin', [SubAdminController::class, 'updatesubadmin']);
   // Residents
   Route::post('registerresident', [ResidentController::class, 'registerresident']);
+  Route::post('updateusername', [ResidentController::class, 'updateUserName']);
   Route::get('viewresidents/{id}', [ResidentController::class, 'viewresidents']);
   Route::get('deleteresident/{id}', [ResidentController::class, 'deleteresident']);
   Route::get('searchresident/{subadminid}/{q?}', [ResidentController::class, 'searchresident']);
@@ -76,7 +79,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('verifyresident', [ResidentController::class, 'verifyresident']);
   Route::post('verifyhouseresident', [ResidentController::class, 'verifyhouseresident']);
   Route::post('verifyapartmentresident', [ResidentController::class, 'verifyapartmentresident']);
-
+  Route::get('filterResident/{subadminid}/{type}', [ResidentController::class, 'filterResident']);
 
   // GateKeeper
   Route::post('registergatekeeper', [GateKeeperController::class, 'registergatekeeper']);
@@ -188,7 +191,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
   //Chatroom
   Route::post('createchatroom', [ChatRoomController::class, 'createchatroom']);
-  Route::get('fetch-chat-room/{userid}/{chatuserid}', [ChatRoomController::class, 'fetchChatRoom']);
+  Route::post('chatroom/status', [ChatRoomController::class, 'chatRequestStatus']);
+  Route::post('chatroom/status/chat-request', [ChatRoomController::class, 'sendChatRequestStatus']);
 
 
 
@@ -248,6 +252,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   //Market Place
 
   Route::post('addProduct', [MarketPlaceController::class, 'addProduct']);
+  Route::post('product-status', [MarketPlaceController::class, 'productStatus']);
   Route::get('viewProducts/{societyid}', [MarketPlaceController::class, 'viewProducts']);
   Route::get('product-seller-info/{residentid}', [MarketPlaceController::class, 'productSellerInfo']);
   Route::get('viewSellProductsResidnet/{residentid}', [MarketPlaceController::class, 'viewSellProductsResidnet']);
@@ -267,14 +272,34 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('finance-manager/bills/filter-bills/', [FinanceManagerController::class, 'filterBills']);
   Route::post('finance-manager/bills/search', [FinanceManagerController::class, 'billSearch']);
 
+  Route::post('eventfire', [RoleController::class, 'eventfire']);
 
 
-  //Super Admin Finance Managers
 
-  Route::post('superadmin-finance-manager/superAdminFinanceMangerRegister', [SuperAdminFinanceManagerController::class, 'superAdminFinanceMangerRegister']);
-  Route::get('finance-manager/view/{id}', [FinanceManagerController::class, 'view']);
-  Route::get('finance-manager/delete/{id}', [FinanceManagerController::class, 'delete']);
-  Route::post('finance-manager/update', [FinanceManagerController::class, 'update']);
+
+//INDIVIDUAL BILL
+
+// Route::post('individual-bill/createIndividualBill', [IndividualBillController::class, 'createIndividualBill']);
+
+// Route::get('individual-bill/getIndividualBillsForFinance/{subadminid}', [IndividualBillController::class, 'getIndividualBillsForFinance']);
+// Route::get('individual-bill/getIndividualBillsByResident/{residentid}', [IndividualBillController::class, 'getIndividualBillsByResident']);
+// Route::get('individual-bill/filterIndividualBills/', [IndividualBillController::class, 'filterIndividualBills']);
+// Route::get('individual-bill/filterIndividualBillsByResident/', [IndividualBillController::class, 'filterIndividualBillsByResident']);
+
+//Super Admin Finance Managers
+
+// Route::post('superadmin-finance-manager/superAdminFinanceMangerRegister', [SuperAdminFinanceManagerController::class, 'superAdminFinanceMangerRegister']);
+// Route::get('finance-manager/view/{id}', [SuperAdminFinanceManagerController::class, 'view']);
+// Route::post('finance-manager/update', [SuperAdminFinanceManagerController::class, 'update']);
+// Route::get('finance-manager/allresidentsBill/{residentid}', [SuperAdminFinanceManagerController::class, 'allresidentsBill']);
+// Route::get('finance-manager/searchResidentsBill/{residentid}/{q?}', [SuperAdminFinanceManagerController::class, 'searchResidentsBill']);
+// Route::get('super-finance-manager/filterBills/', [SuperAdminFinanceManagerController::class, 'filterBills']);
+// Route::get('super-finance-manager/currentMonthBills/{residentid}', [SuperAdminFinanceManagerController::class, 'currentMonthBills']);
+
+  
+
+  
+
 });
 
 

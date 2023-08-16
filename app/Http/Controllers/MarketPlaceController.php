@@ -115,4 +115,43 @@ class MarketPlaceController extends Controller
                 "data" => $chatneighbours
             ]);
     }
+
+
+
+    public function productStatus(Request $request)
+
+    {  $isValidate = Validator::make($request->all(), [
+
+        'id' => 'required|exists:marketplaces,id',
+        'status' => 'required|in:sold,unavailable,forsale',
+    
+      
+
+
+    ]);
+
+
+    if ($isValidate->fails()) {
+        return response()->json([
+            "errors" => $isValidate->errors()->all(),
+            "success" => false
+
+        ], 403);
+    }
+
+
+    $products = Marketplace::find($request->id);
+    $products->status=$request->status;
+    $products->update();
+
+return response()->json([
+    'success' => true,
+    'data' => $products
+    
+]);
+
+
+
+
+    }
 }
