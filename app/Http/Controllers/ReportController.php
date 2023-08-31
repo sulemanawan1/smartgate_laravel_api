@@ -62,7 +62,7 @@ class ReportController extends Controller
                     // "channel_name"=>'call'
         
                 ],
-                "notification"=>['title'=>$report->title,'body'=>$report->description,
+                "notification"=>['title'=>'Complain','body'=>$report->description,
                 
                 ]
         
@@ -210,7 +210,7 @@ class ReportController extends Controller
                     // "channel_name"=>'call'
         
                 ],
-                "notification"=>['title'=> Carbon::now()->toDateTimeString(),'body'=> $notificationtext,
+                "notification"=>['title'=> 'Complain','body'=> $notificationtext,
                 
                 
                 ]

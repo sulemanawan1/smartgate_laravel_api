@@ -130,6 +130,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('preapproventrynotifications/{userid}', [PreApproveEntryController::class, 'preapproventrynotifications']);
   Route::get('preapproveentries/{userid}', [PreApproveEntryController::class, 'preapproveentries']);
   Route::get('preapproveentryhistories/{userid}', [PreApproveEntryController::class, 'preapproveentryhistories']);
+  Route::get('unapprovedpreapproveentrycount/{gatekeeperid}', [PreApproveEntryController::class, 'unapprovedpreapproveentrycount']);
   Route::post('searchpreapproventry', [PreApproveEntryController::class, 'searchpreapproventry']);
 
 

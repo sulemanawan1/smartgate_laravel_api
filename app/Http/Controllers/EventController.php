@@ -79,7 +79,7 @@ class EventController extends Controller
         "android"=> [
             "priority"=> "high",
             "ttl"=> 60 * 60 * 1,
-            "android_channel_id"=>"smart-gate-notification"
+            "android_channel_id"=>"smartnotification"
 
         ],
         "notification"=>['title'=>'Event','body'=>$event->description,
