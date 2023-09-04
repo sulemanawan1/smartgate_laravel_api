@@ -79,7 +79,7 @@ class EventController extends Controller
         "android"=> [
             "priority"=> "high",
             "ttl"=> 60 * 60 * 1,
-            "android_channel_id"=>"smartnotification"
+            "android_channel_id"=>"high_importance_channel"
 
         ],
         "notification"=>['title'=>'Event','body'=>$event->description,

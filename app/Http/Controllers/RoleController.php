@@ -224,6 +224,52 @@ class RoleController extends Controller
 
 
 
+    public function forgetpassword(Request $request)
+    {
+        $isValidate = Validator::make($request->all(), [
+            'mobileno' => 'required',
+        ]);
+        if ($isValidate->fails()) {
+            return response()->json([
+                "errors" => $isValidate->errors()->all(),
+                "success" => false
+            ], 403);
+
+        } 
+               
+        
+                $users = User::where('mobileno', $request->mobileno)->first();
+
+                if($users==null)
+                {    return response()->json([
+                    "success" => false,
+                    "errors" => ['No User Found'],
+                ], 403);
+    
+                }
+                else if ($users->rolename=='resident')
+                {
+                $tk =   $users->createToken('token')->plainTextToken;
+
+                return response()->json([
+                    "success" => true,
+                    "data" => $users,
+                    "Bearer" => $tk
+
+                ], 200);
+            }
+            else {
+                return response()->json([
+                    "success" => false,
+                    "errors" => ['Operation Failed.'],
+                ], 403);
+            }
+             
+            
+            
+        
+    }
+
 
 
 

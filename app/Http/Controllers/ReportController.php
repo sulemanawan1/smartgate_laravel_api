@@ -302,7 +302,7 @@ class ReportController extends Controller
     public function historyreports($subadminid, $userid)
     {   
         
-        $reports =  Report::where('subadminid', $subadminid)->where('userid', $userid)->whereIn('status', [3, 4])->orderByDesc('updated_at')->paginate(6);;
+        $reports =  Report::where('subadminid', $subadminid)->where('userid', $userid)->whereIn('status', [3, 4])->orderByDesc('updated_at')->paginate(6);
         
         return response()->json([
             "success" => true,

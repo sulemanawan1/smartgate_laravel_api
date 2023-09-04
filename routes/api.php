@@ -311,6 +311,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::post('login', [RoleController::class, 'login']);
 Route::post('residentlogin', [ResidentController::class, 'residentlogin']);
 Route::post('registeruser', [RoleController::class, 'registeruser']);
+Route::post('forgetpassword', [RoleController::class, 'forgetpassword']);
 
 // for Resident and Family Member
 Route::post('login/mobilenumber', [RoleController::class, 'loginWithMobileNumber']);

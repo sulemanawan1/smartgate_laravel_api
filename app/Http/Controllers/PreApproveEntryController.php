@@ -166,7 +166,7 @@ class PreApproveEntryController extends Controller
 
 public function viewpreapproveentryreports($userid)
 {
-    $preapproveentryreports= Preapproveentry::where('userid',"=",$userid)->orderBy('id', 'DESC')->paginate(6);
+    $preapproveentryreports= Preapproveentry::where('userid',"=",$userid)->orderByDesc('updated_at')->paginate(6);
 
     return response()->json([
         "success" => true,
@@ -541,7 +541,7 @@ public function preapproveentries($userid)
 public function preapproveentryhistories($userid)
 {
 
-    $preapproveentries= Preapproveentry::where('userid','=',$userid)->where('status','=',3)
+    $preapproveentries= Preapproveentry::where('userid','=',$userid)->where('status','=',3)->orderByDesc('updated_at')
     ->paginate(6);
 
 
