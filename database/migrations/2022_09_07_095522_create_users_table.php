@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('firstname');
             $table->string('lastname');
-            $table->string('cnic');
+            $table->string('cnic')->unique()->nullable();
             $table->string('address');
             $table->string('mobileno');
             $table->string('password');
