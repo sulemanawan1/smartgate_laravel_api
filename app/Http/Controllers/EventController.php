@@ -89,7 +89,7 @@ class EventController extends Controller
     ];
     $finaldata=json_encode($mydata);
         $headers = array (
-            'Authorization: key=' . $serverkey,
+            'Authorization: key=' . Config('app.serverkey'),
             'Content-Type: application/json'
         );
         $ch = curl_init ();

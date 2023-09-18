@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subadmin;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Resident;
@@ -227,6 +228,58 @@ $residentId=$request->residentid;
             $address->measurementid = $request->measurementid;
             $address->save();
 
+            $subadmins = Subadmin::where('subadminid', $request->subadminid)
+            ->join('users', 'users.id', '=', 'subadmins.subadminid')->get();
+
+        $fcm = [];
+
+      
+
+        foreach ($subadmins as $datavals) {
+            array_push($fcm, $datavals->fcmtoken);
+        }
+
+       
+
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $mydata = [
+            'registration_ids' => $fcm,
+
+            "data" => ["type" => 'Verification'],
+            "android" => [
+                "priority" => "high",
+                "ttl" => 60 * 60 * 1,
+                "android_channel_id" => "pushnotificationapp"
+
+            ],
+            "notification" => [
+                'title' => 'Verification ✅', 
+                'body' => 'You have Verification request from '. $resident->houseaddress.".",
+            ]
+
+        ];
+        $finaldata = json_encode($mydata);
+        $headers = array(
+            'Authorization: key=' . Config('app.serverkey'),
+            'Content-Type: application/json'
+        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $finaldata);
+        $result = curl_exec($ch);
+        // var_dump($result);
+        curl_close($ch);
+
+
+            
+
+
+            
+
 
             return response()->json(
                 [
@@ -298,6 +351,55 @@ $residentId=$request->residentid;
             $address->save();
 
 
+            $subadmins = Subadmin::where('subadminid', $request->subadminid)
+            ->join('users', 'users.id', '=', 'subadmins.subadminid')->get();
+
+        $fcm = [];
+
+      
+
+        foreach ($subadmins as $datavals) {
+            array_push($fcm, $datavals->fcmtoken);
+        }
+
+       
+
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $mydata = [
+            'registration_ids' => $fcm,
+
+            "data" => ["type" => 'Verification'],
+            "android" => [
+                "priority" => "high",
+                "ttl" => 60 * 60 * 1,
+                "android_channel_id" => "pushnotificationapp"
+
+            ],
+            "notification" => [
+                'title' => 'Verification ✅', 
+                'body' => 'You have Verification request from '. $resident->houseaddress.".",
+            ]
+
+        ];
+        $finaldata = json_encode($mydata);
+        $headers = array(
+            'Authorization: key=' . Config('app.serverkey'),
+            'Content-Type: application/json'
+        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $finaldata);
+        $result = curl_exec($ch);
+        // var_dump($result);
+        curl_close($ch);
+
+
+
+
             return response()->json(
                 [
     
@@ -366,6 +468,55 @@ $residentId=$request->residentid;
             $address->aid = $request->aid;
             $address->measurementid = $request->measurementid;
             $address->save();
+
+
+            $subadmins = Subadmin::where('subadminid', $request->subadminid)
+            ->join('users', 'users.id', '=', 'subadmins.subadminid')->get();
+
+        $fcm = [];
+
+      
+
+        foreach ($subadmins as $datavals) {
+            array_push($fcm, $datavals->fcmtoken);
+        }
+
+       
+
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $mydata = [
+            'registration_ids' => $fcm,
+
+            "data" => ["type" => 'Verification'],
+            "android" => [
+                "priority" => "high",
+                "ttl" => 60 * 60 * 1,
+                "android_channel_id" => "pushnotificationapp"
+
+            ],
+            "notification" => [
+                'title' => 'Verification ✅', 
+                'body' => 'You have Verification request from '. $resident->houseaddress.".",
+            ]
+
+        ];
+        $finaldata = json_encode($mydata);
+        $headers = array(
+            'Authorization: key=' . Config('app.serverkey'),
+            'Content-Type: application/json'
+        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $finaldata);
+        $result = curl_exec($ch);
+        // var_dump($result);
+        curl_close($ch);
+
+
 
 
             return response()->json(
@@ -739,6 +890,67 @@ $residentId=$request->residentid;
 
 
 
+
+
+        $fcm=[];
+
+        $residents= Resident::where('residentid',$request->residentid)
+        ->join('users','users.id','=','residents.residentid')->get();
+
+        
+      
+
+        foreach ($residents as $datavals) {
+
+            array_push($fcm, $datavals['fcmtoken']);
+
+        }
+
+           
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $mydata=['registration_ids'=>$fcm,
+ 
+        "data"=>["type"=>'Verification'],
+        "android"=> [
+            "priority"=> "high",
+            "ttl"=> 60 * 60 * 1,
+
+        ],
+        "notification"=>['title'=>'Verification','body'=>'you are successfully registered ✅',
+        
+        
+        ]
+
+    ];
+    $finaldata=json_encode($mydata);
+        $headers = array (
+            'Authorization: key=' .  Config('app.serverkey'),
+            'Content-Type: application/json'
+        );
+        $ch = curl_init ();
+        curl_setopt ( $ch, CURLOPT_URL, $url );
+        curl_setopt ( $ch, CURLOPT_POST, true );
+        curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $finaldata );
+        $result = curl_exec ( $ch );
+        // var_dump($result);
+        curl_close ( $ch );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         return response()->json([
             "success" => true,
             "data" => $residents
@@ -817,6 +1029,59 @@ $residentId=$request->residentid;
         $user = User::where('id',  $residents->residentid)->first();
         $user->address =  $request->houseaddress;
         $user->update();
+
+
+
+        $fcm=[];
+
+        $residents= Resident::where('residentid',$request->residentid)
+        ->join('users','users.id','=','residents.residentid')->get();
+
+        
+      
+
+        foreach ($residents as $datavals) {
+
+            array_push($fcm, $datavals['fcmtoken']);
+
+        }
+
+           
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $mydata=['registration_ids'=>$fcm,
+ 
+        "data"=>["type"=>'Verification'],
+        "android"=> [
+            "priority"=> "high",
+            "ttl"=> 60 * 60 * 1,
+
+        ],
+        "notification"=>['title'=>'Verification','body'=>'you are successfully registered ✅',
+        
+        
+        ]
+
+    ];
+    $finaldata=json_encode($mydata);
+        $headers = array (
+            'Authorization: key=' .  Config('app.serverkey'),
+            'Content-Type: application/json'
+        );
+        $ch = curl_init ();
+        curl_setopt ( $ch, CURLOPT_URL, $url );
+        curl_setopt ( $ch, CURLOPT_POST, true );
+        curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $finaldata );
+        $result = curl_exec ( $ch );
+        // var_dump($result);
+        curl_close ( $ch );
+
+
+
+
+
 
 
 
@@ -899,6 +1164,58 @@ $residentId=$request->residentid;
         $user->update();
 
 
+        $fcm=[];
+
+        $residents= Resident::where('residentid',$request->residentid)
+        ->join('users','users.id','=','residents.residentid')->get();
+
+        
+      
+
+        foreach ($residents as $datavals) {
+
+            array_push($fcm, $datavals['fcmtoken']);
+
+        }
+
+           
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $mydata=['registration_ids'=>$fcm,
+ 
+        "data"=>["type"=>'Verification'],
+        "android"=> [
+            "priority"=> "high",
+            "ttl"=> 60 * 60 * 1,
+
+        ],
+        "notification"=>['title'=>'Verification','body'=>'you are successfully registered ✅',
+        
+        
+        ]
+
+    ];
+    $finaldata=json_encode($mydata);
+        $headers = array (
+            'Authorization: key=' .  Config('app.serverkey'),
+            'Content-Type: application/json'
+        );
+        $ch = curl_init ();
+        curl_setopt ( $ch, CURLOPT_URL, $url );
+        curl_setopt ( $ch, CURLOPT_POST, true );
+        curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $finaldata );
+        $result = curl_exec ( $ch );
+        // var_dump($result);
+        curl_close ( $ch );
+
+
+
+
+
+
+
 
         return response()->json([
             "success" => true,
@@ -932,7 +1249,25 @@ $residentId=$request->residentid;
     }
 
 
-   
+    public function unverifiedresidentcount($subadminid)
+    {
+    
+       
+    
+    
+    $count = Resident::where('subadminid',$subadminid)->where('status','0')->count();
+        
+    
+    
+    
+        return response()->json([
+            "success" => true,
+            "data" => $count,
+    
+        ]);
+    
+    
+    }
     
 
 }

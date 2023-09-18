@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('noticedetail');
             $table->date('startdate');
             $table->date('enddate');
-            // $table->time('starttime');
-            // $table->time('endtime');
+            $table->time('starttime');
+            $table->time('endtime');
 
             $table->integer('status');
             $table->unsignedBigInteger('subadminid');

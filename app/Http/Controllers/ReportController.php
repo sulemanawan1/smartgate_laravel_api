@@ -1,13 +1,12 @@
 <?php
 namespace App\Http\Controllers;
-use Carbon\Carbon;
 use App\Models\Report;
 use App\Models\Resident;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
-// 0=> pending
+        // 0=> pending
         // 2=> in progress
         // 3=> rejected
         // 4=> completed
@@ -50,7 +49,6 @@ class ReportController extends Controller
         
         }
         
-              $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
                 $url = 'https://fcm.googleapis.com/fcm/send';
                 $mydata=['registration_ids'=>$fcm,
          
@@ -69,7 +67,7 @@ class ReportController extends Controller
             ];
             $finaldata=json_encode($mydata);
                 $headers = array (
-                    'Authorization: key=' . $serverkey,
+                    'Authorization: key=' .  Config('app.serverkey'),
                     'Content-Type: application/json'
                 );
                 $ch = curl_init ();
@@ -126,7 +124,7 @@ class ReportController extends Controller
             'id' => 'required|exists:reports,id',
             'userid' => 'required|exists:users,id',
             'status' => 'required',
-            'statusdescription' => 'required',
+            'statusdescription' => 'nullable',
         ]);
         if ($isValidate->fails()) {
             return response()->json([
@@ -136,7 +134,7 @@ class ReportController extends Controller
         }
         $report = Report::Find($request->id);
         $report->status = $request->status;
-        $report->statusdescription = $request->statusdescription;
+        $report->statusdescription = $request->statusdescription??"NA";
         $report->update();
 
        
@@ -198,11 +196,10 @@ class ReportController extends Controller
         
        
         
-              $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
                 $url = 'https://fcm.googleapis.com/fcm/send';
                 $mydata=['registration_ids'=>$fcm,
          
-                "data"=>["type"=>$isRejected?'ReportHistory' : 'Report'],
+                "data"=>["type"=>$isRejected?'ReportHistory' : 'Report',],
                 "android"=> [
                     "priority"=> "high",
                     "ttl"=> 60 * 60 * 1,
@@ -218,7 +215,7 @@ class ReportController extends Controller
             ];
             $finaldata=json_encode($mydata);
                 $headers = array (
-                    'Authorization: key=' . $serverkey,
+                    'Authorization: key=' .  Config('app.serverkey'),
                     'Content-Type: application/json'
                 );
                 $ch = curl_init ();
@@ -284,7 +281,7 @@ class ReportController extends Controller
                 "reports.statusdescription",
                  "reports.created_at",
                  "reports.updated_at",
-            )-> GET();
+            )->orderBy('created_at','desc')-> GET();
         return response()->json([
             "success" => true,
             "data" => $reports
@@ -309,4 +306,46 @@ class ReportController extends Controller
             "data" => $reports
         ]);
     }
+
+
+    public function pendingreportscount($subadminid)
+{
+
+   
+
+
+$reportsCount = Report::where('subadminid',$subadminid)->where('status',0)->count();
+    
+
+
+
+    return response()->json([
+        "success" => true,
+        "data" => $reportsCount,
+
+    ]);
+
+
+}
+
+
+public function inprogressreportscount($subadminid)
+{
+
+   
+
+
+$reportsCount = Report::where('subadminid',$subadminid)->where('status','2')->count();
+    
+
+
+
+    return response()->json([
+        "success" => true,
+        "data" => $reportsCount,
+
+    ]);
+
+
+}
 }

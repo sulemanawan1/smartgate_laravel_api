@@ -186,39 +186,47 @@ class SocietyController extends Controller
     }
 
 
-
-
-    public function searchsociety($q, $superadminid = null)
+    public function    searchsociety($q)
     {
-        $society = Society::where(function ($query) use ($q) {
-            $query->where('name', 'LIKE', '%' . $q . '%')
-                ->orWhere('address', 'LIKE', '%' . $q . '%');
-        })
-            ->leftJoin('subadmins', 'societies.id', '=', 'subadmins.societyid')
-            ->whereNotNull('subadmins.subadminid');
 
-        if ($superadminid !== null) {
-            $society->where('societies.superadminid', $superadminid);
-        }
 
-        $society = $society->get();
+        $society = Society::where('name', 'LIKE', '%' . $q . '%')->orWhere('address', 'LIKE', '%' . $q . '%')->get();
 
-        if ($society->isEmpty()) {
-            return response()->json(["message" => "No community found matching the search query or filters."]);
-        }
-
-        $result = [];
-
-        foreach ($society as $societyData) {
-            $result[] = [
-                "societydata" => $societyData,
-                "message" => "success."
-
-            ];
-        }
-
-        return response()->json(["socitiesdata" => $result]);
+        return response()->json(["data" => $society]);
     }
+
+
+    // public function searchsociety($q, $superadminid = null)
+    // {
+    //     $society = Society::where(function ($query) use ($q) {
+    //         $query->where('name', 'LIKE', '%' . $q . '%')
+    //             ->orWhere('address', 'LIKE', '%' . $q . '%');
+    //     })
+    //         ->leftJoin('subadmins', 'societies.id', '=', 'subadmins.societyid')
+    //         ->whereNotNull('subadmins.subadminid');
+
+    //     if ($superadminid !== null) {
+    //         $society->where('societies.superadminid', $superadminid);
+    //     }
+
+    //     $society = $society->get();
+
+    //     if ($society->isEmpty()) {
+    //         return response()->json(["message" => "No community found matching the search query or filters."]);
+    //     }
+
+    //     $result = [];
+
+    //     foreach ($society as $societyData) {
+    //         $result[] = [
+    //             "societydata" => $societyData,
+    //             "message" => "success."
+
+    //         ];
+    //     }
+
+    //     return response()->json(["socitiesdata" => $result]);
+    // }
 
 
     public function filtersocietybuilding($id, $type)

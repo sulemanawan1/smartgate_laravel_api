@@ -16,8 +16,8 @@ class NoticeBoardController extends Controller
             'noticedetail' => 'required|string',
             'startdate' => 'required|date',
             'enddate' => 'required|date|after:startdate',
-            // 'starttime' => 'date_format:H:i|required',
-            // 'endtime' => 'date_format:H:i|after:starttime|required',
+            'starttime' => 'date_format:H:i|required',
+            'endtime' => 'date_format:H:i|after:starttime|required',
 
             'status' => 'required',
             'subadminid' => 'required|exists:users,id',
@@ -33,8 +33,8 @@ class NoticeBoardController extends Controller
         $notice->noticedetail = $request->noticedetail;
         $notice->startdate =  Carbon::parse($request->startdate);
         $notice->enddate =  Carbon::parse($request->enddate);
-        // $notice->starttime = $request->starttime;
-        // $notice->endtime = $request->endtime;
+        $notice->starttime = $request->starttime;
+        $notice->endtime = $request->endtime;
 
         $notice->status = $request->status;
         $notice->subadminid = $request->subadminid;
@@ -62,7 +62,6 @@ class NoticeBoardController extends Controller
         }
 
            
-        $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
         $url = 'https://fcm.googleapis.com/fcm/send';
         $mydata=['registration_ids'=>$fcm,
  
@@ -81,7 +80,7 @@ class NoticeBoardController extends Controller
     ];
     $finaldata=json_encode($mydata);
         $headers = array (
-            'Authorization: key=' . $serverkey,
+            'Authorization: key=' .  Config('app.serverkey'),
             'Content-Type: application/json'
         );
         $ch = curl_init ();
@@ -108,7 +107,7 @@ class NoticeBoardController extends Controller
     }
     public function viewallnotices($subadminid)
     {
-        $notice = Notice::where('subadminid', $subadminid)->get();
+        $notice = Notice::where('subadminid', $subadminid)->orderBy('created_at','desc')->get();
         return response()->json([
             "success"=>true,
             "data" => $notice,

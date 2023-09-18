@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ChatRequestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubAdminController;
@@ -32,8 +31,6 @@ use App\Http\Controllers\VistorDetailController;
 use App\Http\Controllers\MarketPlaceController;
 use App\Http\Controllers\EmergencyController;
 use App\Http\Controllers\FinanceManagerController;
-use App\Http\Controllers\SuperAdminFinanceManagerController;
-use App\Http\Controllers\IndividualBillController;
 
 
 
@@ -80,6 +77,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('verifyhouseresident', [ResidentController::class, 'verifyhouseresident']);
   Route::post('verifyapartmentresident', [ResidentController::class, 'verifyapartmentresident']);
   Route::get('filterResident/{subadminid}/{type}', [ResidentController::class, 'filterResident']);
+  Route::get('unverifiedresidentcount/{subadminid}', [ResidentController::class, 'unverifiedresidentcount']);
 
   // GateKeeper
   Route::post('registergatekeeper', [GateKeeperController::class, 'registergatekeeper']);
@@ -116,6 +114,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('pendingreports/{subadminid}', [ReportController::class, 'pendingreports']);
   Route::get('historyreportedresidents/{subadminid}', [ReportController::class, 'historyreportedresidents']);
   Route::get('historyreports/{subadminid}/{userid}', [ReportController::class, 'historyreports']);
+  Route::get('pendingreportscount/{subadminid}', [ReportController::class, 'pendingreportscount']);
+  Route::get('inprogressreportscount/{subadminid}', [ReportController::class, 'inprogressreportscount']);
 
 
   // Preapproveentry
@@ -187,7 +187,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('addfamilymember', [FamilyMemberController::class, 'addfamilymember']);
   Route::get('viewfamilymember/{subadminid}/{residentid}', [FamilyMemberController::class, 'viewfamilymember']);
 
-  Route::get('fire', [RoleController::class, 'fire']);
 
 
   //Chatroom
@@ -205,7 +204,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('chatneighbours/{subadminid}', [ChatController::class, 'chatneighbours']);
   Route::get('chatgatekeepers/{subadminid}', [ChatController::class, 'chatgatekeepers']);
   Route::get('viewconversationsneighbours/{chatroomid}', [ChatController::class, 'viewconversationsneighbours']);
-  Route::get('zegocall/{residentid}', [ChatController::class, 'zegocall']);
 
 
   // Measurements
@@ -261,6 +259,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
   //Emergency
   Route::post('addEmergency', [EmergencyController::class, 'addEmergency']);
   Route::get('viewEmergency/{subadminid}', [EmergencyController::class, 'viewEmergency']);
+  Route::get('emergencycount/{subadminid}', [EmergencyController::class, 'emergencycount']);
+
 
   // Finance Managers
 
@@ -273,7 +273,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('finance-manager/bills/filter-bills/', [FinanceManagerController::class, 'filterBills']);
   Route::post('finance-manager/bills/search', [FinanceManagerController::class, 'billSearch']);
 
-  Route::post('eventfire', [RoleController::class, 'eventfire']);
 
 
 

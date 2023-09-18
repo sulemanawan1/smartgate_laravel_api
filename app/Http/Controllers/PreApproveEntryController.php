@@ -73,7 +73,6 @@ class PreApproveEntryController extends Controller
         }
 
            
-        $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
         $url = 'https://fcm.googleapis.com/fcm/send';
         $mydata=['registration_ids'=>$fcm,
  
@@ -91,7 +90,7 @@ class PreApproveEntryController extends Controller
     ];
     $finaldata=json_encode($mydata);
         $headers = array (
-            'Authorization: key=' . $serverkey,
+            'Authorization: key=' .  Config('app.serverkey'),
             'Content-Type: application/json'
         );
         $ch = curl_init ();
@@ -242,7 +241,6 @@ public function viewpreapproveentryreports($userid)
            
     
                
-            $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
             $url = 'https://fcm.googleapis.com/fcm/send';
             $mydata=['registration_ids'=>$fcm,
      
@@ -260,7 +258,7 @@ public function viewpreapproveentryreports($userid)
         ];
         $finaldata=json_encode($mydata);
             $headers = array (
-                'Authorization: key=' . $serverkey,
+                'Authorization: key=' .  Config('app.serverkey'),
                 'Content-Type: application/json'
             );
             $ch = curl_init ();
@@ -321,7 +319,6 @@ $bodyData="Your Preapproved Entry Just Checkout";
        
 
            
-        $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
         $url = 'https://fcm.googleapis.com/fcm/send';
         $mydata=['registration_ids'=>$fcm,
  
@@ -339,7 +336,7 @@ $bodyData="Your Preapproved Entry Just Checkout";
     ];
     $finaldata=json_encode($mydata);
         $headers = array (
-            'Authorization: key=' . $serverkey,
+            'Authorization: key=' .  Config('app.serverkey'),
             'Content-Type: application/json'
         );
         $ch = curl_init ();
@@ -423,7 +420,6 @@ $bodyData="Your Preapproved Entry Just Checkout";
         
  
             
-         $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
          $url = 'https://fcm.googleapis.com/fcm/send';
          $mydata=['registration_ids'=>$fcm,
   
@@ -441,7 +437,7 @@ $bodyData="Your Preapproved Entry Just Checkout";
      ];
      $finaldata=json_encode($mydata);
          $headers = array (
-             'Authorization: key=' . $serverkey,
+             'Authorization: key=' .  Config('app.serverkey'),
              'Content-Type: application/json'
          );
          $ch = curl_init ();

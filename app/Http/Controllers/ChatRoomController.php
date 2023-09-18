@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 use App\Models\Chatroom;
-use App\Models\Chatroomuser;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\Chat;
 class ChatRoomController extends Controller
 {
-    //
+    
 
     public function createchatroom (Request $request)
     {
@@ -110,8 +107,7 @@ public function chatRequestStatus(Request $request)
     }
 
     $chatRoom =   Chatroom::find($request->id);
-    // $chatRoom->sender=$request->sender;
-    // $chatRoom->receiver=$request->receiver;
+    
     if ($request->status=='accepted')
 
     {
@@ -153,7 +149,6 @@ public function chatRequestStatus(Request $request)
   
         $chatRoom->sender=$request->sender;
         $chatRoom->receiver=$request->receiver;
-        
         $chatRoom->status=$request->status;
         $chatRoom->update();
    

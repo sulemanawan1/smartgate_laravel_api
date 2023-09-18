@@ -67,8 +67,11 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     |
     */
+    'serverkey'=>'AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR',
+
 
     'timezone' => 'Asia/Karachi',
+    
 
     /*
     |--------------------------------------------------------------------------
