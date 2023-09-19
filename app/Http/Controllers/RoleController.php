@@ -317,16 +317,6 @@ class RoleController extends Controller
     }
 
 
-    public function eventfire()
-    {
-
-               event(new ChatEvent('helllo'));
-             
-
-
-
-         
-    }
 
     public  function resetpassword(Request $request)
 

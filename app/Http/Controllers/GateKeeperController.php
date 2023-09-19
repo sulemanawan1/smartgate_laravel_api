@@ -15,7 +15,7 @@ class GateKeeperController extends Controller
             'lastname' => 'required|string|max:191',
             'cnic' => 'required|unique:users|max:191',
             'address' => 'required',
-            'mobileno' => 'required',
+            'mobileno' => 'required|unique:users',
             'gateno' => 'nullable',
             'roleid' => 'required',
             'rolename' => 'required',

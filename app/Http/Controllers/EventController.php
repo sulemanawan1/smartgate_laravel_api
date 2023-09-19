@@ -1,12 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Eventimage;
 use App\Models\Gatekeeper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Event;
-use App\Models\User;
 use App\Models\Resident;
 use Carbon\Carbon;
 
@@ -71,7 +69,6 @@ class EventController extends Controller
 
        
            
-        $serverkey='AAAAcuxXPmA:APA91bEz-6ptcGS8KzmgmSLjb-6K_bva-so3i6Eyji_ihfncqXttVXjdBQoU6V8sKilzLb9MvSHFId-KK7idDwbGo8aXHpa_zjGpZuDpM67ICKM7QMCGUO_JFULTuZ_ApIOxdF3TXeDR';
         $url = 'https://fcm.googleapis.com/fcm/send';
         $mydata=['registration_ids'=>$fcm,
  

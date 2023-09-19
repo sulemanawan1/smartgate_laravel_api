@@ -194,7 +194,7 @@ class SocietyController extends Controller
 
         return response()->json(["data" => $society]);
     }
-
+//  finance manager search route change
 
     // public function searchsociety($q, $superadminid = null)
     // {
