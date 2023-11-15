@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlockedUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubAdminController;
@@ -37,7 +38,6 @@ use App\Http\Controllers\FinanceManagerController;
 
 
 
-
 Route::middleware(['auth:sanctum'])->group(function () {
 
 
@@ -63,7 +63,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('updatesubadmin', [SubAdminController::class, 'updatesubadmin']);
   // Residents
   Route::post('registerresident', [ResidentController::class, 'registerresident']);
-  Route::post('updateusername', [ResidentController::class, 'updateUserName']);
+  Route::post('updateusername', [ResidentController::class, 'updateUserName']); 
+  Route::post('updatechatvisibility', [ResidentController::class, 'updateChatVisibility']); 
+  Route::post('checkchatvisibility', [ResidentController::class, 'checkChatVisibility']); 
   Route::get('viewresidents/{id}', [ResidentController::class, 'viewresidents']);
   Route::get('deleteresident/{id}', [ResidentController::class, 'deleteresident']);
   Route::get('searchresident/{subadminid}/{q?}', [ResidentController::class, 'searchresident']);
@@ -252,7 +254,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
   Route::post('addProduct', [MarketPlaceController::class, 'addProduct']);
   Route::post('product-status', [MarketPlaceController::class, 'productStatus']);
-  Route::get('viewProducts/{societyid}', [MarketPlaceController::class, 'viewProducts']);
+  Route::get('viewProducts/{societyid}/{category}', [MarketPlaceController::class, 'viewProducts']);
   Route::get('product-seller-info/{residentid}', [MarketPlaceController::class, 'productSellerInfo']);
   Route::get('viewSellProductsResidnet/{residentid}', [MarketPlaceController::class, 'viewSellProductsResidnet']);
 
@@ -273,8 +275,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('finance-manager/bills/filter-bills/', [FinanceManagerController::class, 'filterBills']);
   Route::post('finance-manager/bills/search', [FinanceManagerController::class, 'billSearch']);
 
+// Blocked User
 
 
+  Route::post('blockuser', [BlockedUserController::class, 'blockuser']);
+  Route::post('unblockuser', [BlockedUserController::class, 'unblockuser']);
+  Route::post('checkblockuser', [BlockedUserController::class, 'checkblockuser']);
 
 
 //INDIVIDUAL BILL
@@ -311,6 +317,9 @@ Route::post('login', [RoleController::class, 'login']);
 Route::post('residentlogin', [ResidentController::class, 'residentlogin']);
 Route::post('registeruser', [RoleController::class, 'registeruser']);
 Route::post('forgetpassword', [RoleController::class, 'forgetpassword']);
-
+Route::get('clear-cache', function() {
+  $exitCode = Artisan::call('cache:clear');
+  // return what you want
+});
 // for Resident and Family Member
 Route::post('login/mobilenumber', [RoleController::class, 'loginWithMobileNumber']);

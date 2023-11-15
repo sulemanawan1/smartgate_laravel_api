@@ -15,7 +15,7 @@ class FamilyMemberController extends Controller
         $isValidate = Validator::make($request->all(), [
             'firstname' => 'required|string|max:191',
             'lastname' => 'required|string|max:191',
-            'cnic' => 'required|unique:users|max:191',
+            'cnic' => 'nullable|unique:users|max:191',
             'address' => 'required',
             'mobileno' => 'required|unique:users',
             'residentid' => 'required|exists:residents,residentid',

@@ -77,10 +77,18 @@ class MarketPlaceController extends Controller
     }
 
 
-    public function viewProducts($societyid)
+    public function viewProducts($societyid,$category)
     {
+       
+        if($category=='All'){
         $products = Marketplace::where('societyid', $societyid)->with('users')
-        ->with('residents')->with('images')->get();
+        ->with('residents')->with('images')->orderBy('created_at','desc')->get();
+        }
+        else {       
+           
+
+             $products = Marketplace::where('societyid', $societyid)->where('category', $category)->with('users')
+            ->with('residents')->with('images')->orderBy('created_at','desc')->get();}
         return response()->json([
             'success' => true,
             'data' => $products
@@ -92,7 +100,7 @@ class MarketPlaceController extends Controller
         $products = Marketplace::where('residentid', $residentid)
             ->with('users')
             ->with('residents')
-            ->with('images')->get();
+            ->with('images')->orderBy('created_at','desc')->get();
         return response()->json([
             'success' => true,
             'data' => $products

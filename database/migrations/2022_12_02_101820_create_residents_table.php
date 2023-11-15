@@ -56,23 +56,11 @@ return new class extends Migration
             $table->string('country');
             $table->string('state');
             $table->string('city');
-
-
-         
-            // $table->unsignedBigInteger('societyid');
-            // $table->foreign('societyid')->references('id')->on('societies')->onDelete('cascade');
-            // $table->unsignedBigInteger('pid');
-            // $table->foreign('pid')->references('id')->on('phases')->onDelete('cascade');
-            // $table->unsignedBigInteger('bid');
-            // $table->foreign('bid')->references('id')->on('blocks')->onDelete('cascade');
-            // $table->unsignedBigInteger('sid');
-            // $table->foreign('sid')->references('id')->on('streets')->onDelete('cascade');
-            // $table->unsignedBigInteger('propertyid');
-            // $table->foreign('propertyid')->references('id')->on('properties')->onDelete('cascade');
-            $table->string('houseaddress');
+             $table->string('houseaddress');
             $table->string('vechileno');
             $table->string('residenttype');
             $table->string('propertytype');
+            $table->string('visibility')->default('none');;
             $table->integer('committeemember');
             $table->integer('status');
 

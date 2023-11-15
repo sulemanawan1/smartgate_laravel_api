@@ -21,9 +21,11 @@ class EventController extends Controller
              'title' => 'required',
             'description' => 'required',
             'startdate' => 'required|date',
-            'enddate' => 'required|date|after:startdate',
-            'active'=> 'required'
-
+            // 'enddate' => 'required|date|after:startdate',
+            'enddate' => 'required|date',
+            'active'=> 'required',
+            'starttime' => 'date_format:H:i|required',
+            'endtime' => 'date_format:H:i|required|after:starttime',
 
 
         ]);
@@ -44,6 +46,8 @@ class EventController extends Controller
         $event->startdate=  Carbon::parse($request->startdate)->format('Y-m-d');
         $event->enddate= Carbon::parse($request->enddate)->format('Y-m-d');
         $event->active=$request->active;
+        $event->starttime = $request->starttime;
+        $event->endtime = $request->endtime;
         $event->save();
         $fcm=[];
         $residents= Resident::where('subadminid',$request->userid)
@@ -79,7 +83,7 @@ class EventController extends Controller
             "android_channel_id"=>"high_importance_channel"
 
         ],
-        "notification"=>['title'=>'Event','body'=>$event->description,
+        "notification"=>['title'=>'Up Coming Event','body'=>$event->description,
         
         ]
 

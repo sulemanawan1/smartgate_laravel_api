@@ -20,6 +20,93 @@ use Illuminate\Support\Facades\File;
 class ResidentController extends Controller
 {
 
+    public function checkChatVisibility(Request $request)
+    {
+
+        $isValidate = Validator::make($request->all(), [
+
+            'residentid' => 'required|exists:residents,residentid',
+            ]);
+
+
+        if ($isValidate->fails()) {
+            return response()->json([
+                "errors" => $isValidate->errors()->all(),
+                "success" => false
+
+            ], 403);
+        }
+
+        $chatVisibilty= Resident::where('residentid',$request->residentid)->first();
+
+         
+
+       if ($chatVisibilty->visibility=='none')
+
+       {
+        return response()->json([
+            'success'=>true,
+            'data' => $chatVisibilty->visibility,
+            
+            
+        ]);
+
+       }
+       return response()->json([
+        'success'=>true,
+        'data' => $chatVisibilty->visibility,
+        
+        ]
+    
+    );
+
+       
+
+
+    }
+
+
+      public function updateChatVisibility(Request $request)
+      {
+
+        $isValidate = Validator::make($request->all(), [
+
+
+            'residentid' => 'required|exists:residents,residentid',
+            'visibility' => 'nullable',
+            
+        ]);
+
+
+        if ($isValidate->fails()) {
+            return response()->json([
+                "errors" => $isValidate->errors()->all(),
+                "success" => false
+
+            ], 403);
+        }
+
+
+
+$residentId=$request->residentid;
+
+        $resident = Resident::where('residentid',$residentId)->get()->first();
+       
+     
+        $resident->visibility=$request->visibility;
+        
+        $resident->update();
+
+        return response()->json([
+            "success" => true,
+            "status"=>$resident->visibility,
+
+        
+        ]);
+
+      }
+
+
       public function updateUserName(Request $request)
       {
 
