@@ -283,26 +283,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('checkblockuser', [BlockedUserController::class, 'checkblockuser']);
 
 
-//INDIVIDUAL BILL
-
-// Route::post('individual-bill/createIndividualBill', [IndividualBillController::class, 'createIndividualBill']);
-
-// Route::get('individual-bill/getIndividualBillsForFinance/{subadminid}', [IndividualBillController::class, 'getIndividualBillsForFinance']);
-// Route::get('individual-bill/getIndividualBillsByResident/{residentid}', [IndividualBillController::class, 'getIndividualBillsByResident']);
-// Route::get('individual-bill/filterIndividualBills/', [IndividualBillController::class, 'filterIndividualBills']);
-// Route::get('individual-bill/filterIndividualBillsByResident/', [IndividualBillController::class, 'filterIndividualBillsByResident']);
-
-//Super Admin Finance Managers
-
-// Route::post('superadmin-finance-manager/superAdminFinanceMangerRegister', [SuperAdminFinanceManagerController::class, 'superAdminFinanceMangerRegister']);
-// Route::get('finance-manager/view/{id}', [SuperAdminFinanceManagerController::class, 'view']);
-// Route::post('finance-manager/update', [SuperAdminFinanceManagerController::class, 'update']);
-// Route::get('finance-manager/allresidentsBill/{residentid}', [SuperAdminFinanceManagerController::class, 'allresidentsBill']);
-// Route::get('finance-manager/searchResidentsBill/{residentid}/{q?}', [SuperAdminFinanceManagerController::class, 'searchResidentsBill']);
-// Route::get('super-finance-manager/filterBills/', [SuperAdminFinanceManagerController::class, 'filterBills']);
-// Route::get('super-finance-manager/currentMonthBills/{residentid}', [SuperAdminFinanceManagerController::class, 'currentMonthBills']);
-
-  
 
   
 
